@@ -2,7 +2,7 @@
 #include "parse.h"
 #include <stdio.h>
 #include <string.h>
-//#include "command.h"
+#include "command.h"
 
 
 int index_buffer;
