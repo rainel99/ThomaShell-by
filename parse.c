@@ -207,7 +207,9 @@ void bultin_command(CommandPtr* commands)
     {
         
         if(strcmp(commands[i]->arguments[0],"cd") == 0 ||
-           strcmp(commands[i]->arguments[0],"exit") == 0)
+           strcmp(commands[i]->arguments[0],"exit") == 0 ||
+           strcmp(commands[i]->arguments[0],"history") == 0 ||
+           strcmp(commands[i]->arguments[0],"again") == 0)
         {
             commands[i]->built_in = 1;
         }
