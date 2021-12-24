@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -9,6 +8,8 @@
 #include "execute.h"
 #include "command.h"
 #include <string.h>
+#include "history.h"
+#include "parse.h"
 
 int counting_commands(CommandPtr* mycommands){
     int commands_count = 0;
@@ -34,7 +35,7 @@ int counting_pipes(CommandPtr* mycommands){
     return pipes_count;
 }
 
-int Execute(CommandPtr* mycommands){
+int Execute(CommandPtr* mycommands, HistoryPtr history){
     if(mycommands == NULL)
         return 1;
 
@@ -65,6 +66,31 @@ int Execute(CommandPtr* mycommands){
     }
     while(mycommands[position] != NULL){
         CommandPtr actual_commands = mycommands[position];
+        //zona de built int
+        if(strcmp(mycommands[0]->arguments[0],"history") == 0)
+        {
+            Read_history(history);
+            position++;
+            continue;
+        }
+        if(strcmp(mycommands[0]->arguments[0],"again") == 0)
+        {
+
+            int line_number = atoi(mycommands[0]->arguments[1]);
+            char* line = malloc(sizeof(char));
+            Again(line_number,line,history); 
+            int read = strlen(line);
+            Write_history(line,history);
+            char** parsed_line = Split(line, read);//splitea la linea
+            CommandPtr* commands = Parse(parsed_line);//convierte la linea en una lista de comandos
+            bultin_command(commands);
+            Execute(commands,history);
+            free(line);
+            free(parsed_line);
+            free(commands);
+            position++;
+            continue;
+        }
 
         if(fork() == 0){
             if(pipes_count > 0){
