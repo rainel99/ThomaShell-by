@@ -2,9 +2,9 @@
 #include "parse.h"
 #include <stdio.h>
 #include <string.h>
-//#include "command.h"
+#include "command.h"
 
-//qsasd
+
 int index_buffer;
 char** Split(char* line, int read)
 {
