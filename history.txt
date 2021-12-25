@@ -1,0 +1,10 @@
+ping localHost
+ping localHost | grep 127
+ping localHost | grep 127
+echo havana malanga | grep a | m
+echo havana malanga | grep a | grep m
+echo hola malanga | grep m
+cat hola.txt
+cat hola.txt | grep t
+cat hola.txt | grep t | grep y
+cat hola.txt | grep t | grep proyo

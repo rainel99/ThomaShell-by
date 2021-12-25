@@ -67,16 +67,16 @@ int Execute(CommandPtr* mycommands, HistoryPtr history){
     while(mycommands[position] != NULL){
         CommandPtr actual_commands = mycommands[position];
         //zona de built int
-        if(strcmp(mycommands[0]->arguments[0],"history") == 0)
+        if(strcmp(mycommands[position]->arguments[0],"history") == 0)//se cambiaron los position, si se pone 0 en lugar de position, solo funciona cuando esta al inicio d la linea
         {
             Read_history(history);
             position++;
             continue;
         }
-        if(strcmp(mycommands[0]->arguments[0],"again") == 0)
+        if(strcmp(mycommands[position]->arguments[0],"again") == 0)
         {
 
-            int line_number = atoi(mycommands[0]->arguments[1]);
+            int line_number = atoi(mycommands[position]->arguments[1]);
             char* line = malloc(sizeof(char));
             Again(line_number,line,history); 
             int read = strlen(line);
@@ -91,7 +91,6 @@ int Execute(CommandPtr* mycommands, HistoryPtr history){
             position++;
             continue;
         }
-
         if(fork() == 0){
             if(pipes_count > 0){
                 if(position == 0){
@@ -115,7 +114,7 @@ int Execute(CommandPtr* mycommands, HistoryPtr history){
             {
                 int fd_In = open(actual_commands->ld, O_RDONLY);
                 if(fd_In == -1)
-                    exit(1);
+                    exit(-1);
                 dup2(fd_In, STDIN_FILENO);
                 close(fd_In);
             }
@@ -123,36 +122,37 @@ int Execute(CommandPtr* mycommands, HistoryPtr history){
             {
                 int fd_Out = creat(actual_commands->gd, 0644);
                 if(fd_Out == -1)
-                    exit(1);
+                    exit(-1);
                 dup2(fd_Out, STDOUT_FILENO);
                 close(fd_Out);
                 if(actual_commands->arguments[0] == NULL)
-                    exit(1);
+                    exit(-1);
             }
             if(actual_commands->gd_append != NULL){
                 int fd_Out_End = open(actual_commands->gd_append, O_CREAT | O_WRONLY | O_APPEND,S_IRWXU | S_IRWXG | S_IRWXO);
                     if(fd_Out_End == -1)
-                        exit(1);
+                        exit(-1);
                 dup2(fd_Out_End, STDOUT_FILENO);
                 close(fd_Out_End);
             }
             int ex = execvp(actual_commands->arguments[0], actual_commands->arguments);
-            if(ex == -1) {
+            if(ex == -1) 
+            {
                 printf("error al ejecutar: %s\n", actual_commands->arguments[0]);
             }
-            exit(1);
+
+            exit(ex);
         }
         else{
-            if(position != pipes_count){
+            if(position < pipes_count){
                 close(pipes_array[position][1]);
             }
+            wait(NULL);
+            //waitpid()
         }
-
         position++;
     }
-    for (int i = 0; i < position; ++i) {
-        wait(NULL);
-    }
+    //aqui
     return  1;
 }
 
