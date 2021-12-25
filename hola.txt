@@ -1,5 +1,5 @@
 
 
-gcc shell.c parse.c parse.h execute.h execute.c command.h command.c
+gcc shell.c parse.c parse.h execute.h execute.c command.h command.c history.c history.h
 agregar n la linea de arriba todos los .c o .h del proyo 
 

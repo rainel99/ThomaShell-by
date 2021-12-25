@@ -53,7 +53,7 @@ char** Split(char* line, int read)
             {
                 parsed_line[index_parsed_line] = buffer;
                 index_parsed_line++;
-                buffer = malloc(1024* sizeof(char));
+                buffer = calloc(1024, sizeof(char));
                 index_buffer = 0;
             }
             if(line[j] == '#')
@@ -87,11 +87,11 @@ CommandPtr* Parse(char** parsed_line)
     int i = 0;
     while (parsed_line[i] != NULL)
     {
-        if(strcmp(parsed_line[i],"|") == 0)
+        if(strcmp(parsed_line[i],"|") == 0 || strcmp(parsed_line[i],";") == 0)
             command_numb ++;
         i++;    
     }
-    CommandPtr* my_commands = malloc((command_numb + 1) * sizeof(CommandPtr));
+    CommandPtr* my_commands = calloc((command_numb + 1) , sizeof(CommandPtr));
     my_commands[command_numb - 1] = NULL;
     //contar los argumentos de cada funcion
     int temp = 1;
@@ -101,11 +101,16 @@ CommandPtr* Parse(char** parsed_line)
     init(my_commands[0]);
     while(parsed_line[i] != NULL)
     {
-        if(strcmp(parsed_line[i],"|") == 0 || strcmp(parsed_line[i],">") == 0 || strcmp(parsed_line[i],">>") == 0 || strcmp(parsed_line[i],"<") == 0)
+        if(strcmp(parsed_line[i],"|") == 0 || 
+           strcmp(parsed_line[i],">") == 0 || 
+           strcmp(parsed_line[i],">>")== 0 || 
+           strcmp(parsed_line[i],"<") == 0 || 
+           strcmp(parsed_line[i],";") == 0
+           )
         {
             if(strcmp(parsed_line[i],">") == 0)
             {
-                my_commands[k]->gd = malloc(1024* sizeof(char));
+                my_commands[k]->gd = calloc(1024, sizeof(char));
                 my_commands[k]->gd = parsed_line[i + 1];
                 i++;
             }
@@ -134,6 +139,15 @@ CommandPtr* Parse(char** parsed_line)
                 temp = 1;
                 i++;
             }
+            if(strcmp(parsed_line[i], ";") == 0)
+            {
+                my_commands[k]->arguments = malloc((temp)* sizeof(char*));
+                k++;
+                my_commands[k] = malloc(sizeof(Command));
+                init(my_commands[k]);
+                temp = 1;
+                i++;
+            }
         }
         else
         {
@@ -149,7 +163,11 @@ CommandPtr* Parse(char** parsed_line)
     int ang = 0;
     while(parsed_line[i] != NULL)
     {
-        if(strcmp(parsed_line[i],"<") == 0 || strcmp(parsed_line[i],">") == 0 || strcmp(parsed_line[i],"|") == 0 || strcmp(parsed_line[i],">>") == 0)
+        if( strcmp(parsed_line[i],"<") == 0 || 
+            strcmp(parsed_line[i],">") == 0 || 
+            strcmp(parsed_line[i],"|") == 0 || 
+            strcmp(parsed_line[i],">>")== 0 ||
+            strcmp(parsed_line[i],";") == 0)
         {
             if(strcmp(parsed_line[i],">") == 0)
             {
@@ -170,6 +188,16 @@ CommandPtr* Parse(char** parsed_line)
                 j = 0;
             }
             if(strcmp(parsed_line[i],"|") == 0)
+            {
+                if(ang == 0)
+                {
+                    my_commands[k]->arguments[j] = NULL;//agrego null al final de cada lista de argumentos
+                }
+                ang = 0;
+                j = 0;
+                k++;
+            }
+            if(strcmp(parsed_line[i],";") == 0)
             {
                 if(ang == 0)
                 {
@@ -208,11 +236,6 @@ void bultin_command(CommandPtr* commands)
         
         if(strcmp(commands[i]->arguments[0],"cd") == 0 ||
            strcmp(commands[i]->arguments[0],"exit") == 0)
-        {
-            commands[i]->built_in = 1;
-        }
-
-        if(commands[i]->arguments[0][0] == '&')
         {
             commands[i]->built_in = 1;
         }
