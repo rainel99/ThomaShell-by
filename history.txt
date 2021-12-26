@@ -18,3 +18,8 @@ ls > untxt.txt
 grep un < untxt.txt
 help
 help
+ls
+echo hola
+ls
+
+ls

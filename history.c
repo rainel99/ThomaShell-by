@@ -10,7 +10,7 @@ void Write_history(char** parsed_line, HistoryPtr history)
     int space = 0;
     while (parsed_line[index] != NULL)// escribir el comando en vez de again
     {
-        if (strcmp("again",parsed_line[index]) ==0 )
+      if (strcmp("again",parsed_line[index]) ==0 )
         {   
             
             index +=1;
@@ -18,7 +18,7 @@ void Write_history(char** parsed_line, HistoryPtr history)
             char* line_in_history =calloc(100,sizeof(char));
             int line_number = atoi(parsed_line[index]);
             Again_line(line_number, line_in_history, history);
-            //printf("%s",line_in_history);
+           //printf("%s",line_in_history);
             strcat(line,line_in_history);
             //printf("%s",line);
             if (parsed_line[index+1] != NULL)
