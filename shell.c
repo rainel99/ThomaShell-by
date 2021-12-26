@@ -23,14 +23,14 @@ int main(int argc, char const *argv[])
         size_t len = 0;
         size_t read = 0;
         read = getline(&line, &len, stdin);//dame la linea
-        if (memcmp("again",line,5) !=0 )// si la linea es diferente de again se guarda en history
-        {
-            Write_history(line,history);
-        }
+       
         char** parsed_line = Split(line, read);//splitea la linea
         CommandPtr* commands = Parse(parsed_line);//convierte la linea en una lista de comandos
         bultin_command(commands);
         status = Execute(commands,history);
+       
+        Write_history(parsed_line,history);
+       
         free(line);
         free(parsed_line);
         free(commands);
