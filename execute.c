@@ -38,10 +38,9 @@ int counting_pipes(CommandPtr* mycommands){
 int Execute(CommandPtr* mycommands, HistoryPtr history){
     if(mycommands == NULL)
         return 1;
-
+    
     int commands_count = counting_commands(mycommands);
     int pipes_count = counting_pipes(mycommands);
-    
     if(mycommands[0]->built_in == 1)
     {
         if(strcmp(mycommands[0]->arguments[0],"cd") == 0)
@@ -55,7 +54,7 @@ int Execute(CommandPtr* mycommands, HistoryPtr history){
         }
     }
 
-
+    int status = 0;
     int position = 0;
     int ** pipes_array;
 
@@ -67,31 +66,64 @@ int Execute(CommandPtr* mycommands, HistoryPtr history){
     while(mycommands[position] != NULL){
         CommandPtr actual_commands = mycommands[position];
         //zona de built int
-        if(strcmp(mycommands[position]->arguments[0],"history") == 0)//se cambiaron los position, si se pone 0 en lugar de position, solo funciona cuando esta al inicio d la linea
+        if(actual_commands->built_in == 1)
         {
-            Read_history(history);
-            position++;
-            continue;
-        }
-        if(strcmp(mycommands[position]->arguments[0],"again") == 0)
-        {
+            if(strcmp(actual_commands->arguments[0],"history") == 0)//se cambiaron los position, si se pone 0 en lugar de position, solo funciona cuando esta al inicio d la linea
+            {
+                Read_history(history);
+                position++;
+                continue;
+            }
+            if(strcmp(actual_commands->arguments[0],"again") == 0)
+            {
 
-            int line_number = atoi(mycommands[position]->arguments[1]);
-            char* line = malloc(sizeof(char));
-            Again(line_number,line,history); 
-            int read = strlen(line);
-            Write_history(line,history);
-            char** parsed_line = Split(line, read);//splitea la linea
-            CommandPtr* commands = Parse(parsed_line);//convierte la linea en una lista de comandos
-            bultin_command(commands);
-            Execute(commands,history);
-            free(line);
-            free(parsed_line);
-            free(commands);
-            position++;
-            continue;
+                int line_number = atoi(mycommands[position]->arguments[1]);
+                char* line = malloc(sizeof(char));
+                Again(line_number,line,history); 
+                int read = strlen(line);
+                Write_history(line,history);
+                char** parsed_line = Split(line, read);//splitea la linea
+                CommandPtr* commands = Parse(parsed_line);//convierte la linea en una lista de comandos
+                bultin_command(commands);
+                Execute(commands,history);
+                free(line);
+                free(parsed_line);
+                free(commands);
+                position++;
+                continue;
+            }
+            if(strcmp(actual_commands->arguments[0],"true") == 0)
+            {
+                status = 0;
+                position ++;
+                continue;
+            }
+            if(strcmp(actual_commands->arguments[0],"false") == 0)
+            {
+                status = 1;
+                position ++;
+                continue;
+            }
+            if(strcmp(actual_commands->arguments[0],"||") == 0)
+            {
+                if(status == 0)
+                    position +=2;
+                else    
+                    position++;
+                continue;
+            }
+            if(strcmp(actual_commands->arguments[0],"&&") == 0)
+            {
+                if(status == 0)
+                    position ++;
+                else    
+                    position+=2;
+                continue;
+
+            }
         }
-        if(fork() == 0){
+        pid_t pid = fork();
+        if(pid == 0){
             if(pipes_count > 0){
                 if(position == 0){
                     close(pipes_array[position][0]);
@@ -135,23 +167,30 @@ int Execute(CommandPtr* mycommands, HistoryPtr history){
                 dup2(fd_Out_End, STDOUT_FILENO);
                 close(fd_Out_End);
             }
-            int ex = execvp(actual_commands->arguments[0], actual_commands->arguments);
-            if(ex == -1) 
+            status = execvp(actual_commands->arguments[0], actual_commands->arguments);
+            if(status == -1) 
             {
                 printf("error al ejecutar: %s\n", actual_commands->arguments[0]);
             }
-
-            exit(ex);
+            exit(status);
         }
         else{
             if(position < pipes_count){
                 close(pipes_array[position][1]);
             }
-            wait(NULL);
-            //waitpid()
+            if((actual_commands->pi == 0 && actual_commands->po == 0))
+                waitpid(pid,&status,0);
         }
         position++;
     }
+    int w = 0;
+    while (mycommands[w] != NULL)
+    {
+        if(mycommands[w]->pi > 0 || mycommands[w]->po > 0)
+            wait(NULL);
+        w++;
+    }
+        
     //aqui
     return  1;
 }

@@ -89,6 +89,8 @@ CommandPtr* Parse(char** parsed_line)
     {
         if(strcmp(parsed_line[i],"|") == 0 || strcmp(parsed_line[i],";") == 0)
             command_numb ++;
+        if(strcmp(parsed_line[i],"&&") == 0 || strcmp(parsed_line[i],"||") == 0)
+            command_numb = command_numb + 2;
         i++;    
     }
     CommandPtr* my_commands = calloc((command_numb + 1) , sizeof(CommandPtr));
@@ -105,7 +107,9 @@ CommandPtr* Parse(char** parsed_line)
            strcmp(parsed_line[i],">") == 0 || 
            strcmp(parsed_line[i],">>")== 0 || 
            strcmp(parsed_line[i],"<") == 0 || 
-           strcmp(parsed_line[i],";") == 0
+           strcmp(parsed_line[i],";") == 0 ||
+           strcmp(parsed_line[i],"&&") == 0 ||
+           strcmp(parsed_line[i],"||") == 0
            )
         {
             if(strcmp(parsed_line[i],">") == 0)
@@ -148,6 +152,36 @@ CommandPtr* Parse(char** parsed_line)
                 temp = 1;
                 i++;
             }
+            if(strcmp(parsed_line[i],"||") == 0)
+            {
+                my_commands[k]->arguments = malloc((temp)* sizeof(char*));
+                k++;
+                my_commands[k] = malloc(sizeof(Command));
+                init(my_commands[k]);
+                temp = 2;
+                my_commands[k]->arguments = malloc((temp)* sizeof(char*));
+                my_commands[k]->arguments[0] = parsed_line[i];
+                k++;
+                my_commands[k] = malloc(sizeof(Command));
+                init(my_commands[k]);
+                temp = 1;
+                i++;
+            }
+            if(strcmp(parsed_line[i],"&&") == 0)
+            {
+                my_commands[k]->arguments = malloc((temp)* sizeof(char*));
+                k++;
+                my_commands[k] = malloc(sizeof(Command));
+                temp = 1;
+                init(my_commands[k]);
+                my_commands[k]->arguments = malloc((temp)* sizeof(char*));
+                my_commands[k]->arguments[0] = parsed_line[i];
+                k++;
+                my_commands[k] = malloc(sizeof(Command));
+                init(my_commands[k]);
+                temp = 1;
+                i++;
+            }
         }
         else
         {
@@ -167,7 +201,9 @@ CommandPtr* Parse(char** parsed_line)
             strcmp(parsed_line[i],">") == 0 || 
             strcmp(parsed_line[i],"|") == 0 || 
             strcmp(parsed_line[i],">>")== 0 ||
-            strcmp(parsed_line[i],";") == 0)
+            strcmp(parsed_line[i],";") == 0 ||
+            strcmp(parsed_line[i],"&&") == 0 ||
+            strcmp(parsed_line[i],"||") == 0)
         {
             if(strcmp(parsed_line[i],">") == 0)
             {
@@ -207,6 +243,29 @@ CommandPtr* Parse(char** parsed_line)
                 j = 0;
                 k++;
             }
+            if(strcmp(parsed_line[i],"||") == 0)
+            {
+                if(ang == 0)
+                {
+                    my_commands[k]->arguments[j] = NULL;//agrego null al final de cada lista de argumentos
+                }
+                ang = 0;
+                j = 0;
+                k++;
+                my_commands[k]->arguments[1] = NULL;
+                k++;
+            }
+            if(strcmp(parsed_line[i],"&&") == 0)
+            {
+                if(ang == 0)
+                {
+                    my_commands[k]->arguments[j] = NULL;//agrego null al final de cada lista de argumentos
+                }
+                ang = 0;
+                j = 0;
+                k+=2;
+                my_commands[k]->arguments[1] = NULL;
+            }
         }
         else
         {
@@ -233,9 +292,14 @@ void bultin_command(CommandPtr* commands)
     char* cd = "cd";
     while (commands[i] != NULL)
     {
-        
         if(strcmp(commands[i]->arguments[0],"cd") == 0 ||
-           strcmp(commands[i]->arguments[0],"exit") == 0)
+           strcmp(commands[i]->arguments[0],"exit") == 0 ||
+           strcmp(commands[i]->arguments[0],"history") == 0 ||
+           strcmp(commands[i]->arguments[0],"again") == 0 ||
+           strcmp(commands[i]->arguments[0],"true") == 0 || 
+           strcmp(commands[i]->arguments[0],"false") == 0 || 
+           strcmp(commands[i]->arguments[0],"||") == 0 ||
+           strcmp(commands[i]->arguments[0],"&&") == 0)
         {
             commands[i]->built_in = 1;
         }
