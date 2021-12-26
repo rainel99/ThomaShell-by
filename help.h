@@ -1,0 +1,1 @@
+int help(char* arg);

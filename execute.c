@@ -10,6 +10,7 @@
 #include <string.h>
 #include "history.h"
 #include "parse.h"
+#include "help.h"
 
 int counting_commands(CommandPtr* mycommands){
     int commands_count = 0;
@@ -52,6 +53,7 @@ int Execute(CommandPtr* mycommands, HistoryPtr history){
         {
             exit(0);
         }
+        
     }
 
     int status = 0;
@@ -68,6 +70,21 @@ int Execute(CommandPtr* mycommands, HistoryPtr history){
         //zona de built int
         if(actual_commands->built_in == 1)
         {
+            if(strcmp(actual_commands->arguments[0],"help") == 0)
+            {
+                char* arg = calloc(20 , sizeof(char));
+                if(actual_commands->arguments[1] != NULL)
+                {
+                     arg = actual_commands->arguments[1];
+                     help(arg);
+                }
+                else
+                {
+                    help("");
+                }
+                position++;
+                continue;
+            }
             if(strcmp(actual_commands->arguments[0],"history") == 0)//se cambiaron los position, si se pone 0 en lugar de position, solo funciona cuando esta al inicio d la linea
             {
                 Read_history(history);

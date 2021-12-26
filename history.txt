@@ -1,10 +1,10 @@
-ping -c5 127.0.0.1 | grep 127 ; ls
-ping localHost | grep 127
-ping localHost | grep 127
-ping localHost | grep 127
-ls ; ls
-ls ; ls
-echo havana | grep a 
-echo havana | grep a | grep m
-echo havana | grep a | grep v
-exit
+ls
+ls > untxt.txt
+grep un | untxt.txt
+grep un < untxt.txt
+cd probar
+ls
+ls > untxt.txt
+grep un < untxt.txt
+help
+help

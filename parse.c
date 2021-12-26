@@ -299,6 +299,7 @@ void bultin_command(CommandPtr* commands)
            strcmp(commands[i]->arguments[0],"true") == 0 || 
            strcmp(commands[i]->arguments[0],"false") == 0 || 
            strcmp(commands[i]->arguments[0],"||") == 0 ||
+           strcmp(commands[i]->arguments[0],"help") == 0 ||
            strcmp(commands[i]->arguments[0],"&&") == 0)
         {
             commands[i]->built_in = 1;
