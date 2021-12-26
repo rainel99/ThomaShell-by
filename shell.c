@@ -27,6 +27,11 @@ int main(int argc, char const *argv[])
         char** parsed_line = Split(line, read);//splitea la linea
         CommandPtr* commands = Parse(parsed_line);//convierte la linea en una lista de comandos
         bultin_command(commands);
+        // printf("%s\n",commands[0]->arguments[0]);
+        // printf("%s\n",commands[1]->arguments[0]);
+        // if(commands[0]->arguments[1] == NULL)
+        //     printf("++\n");
+        // printf("%d\n",commands[0]->built_in);
         status = Execute(commands,history);
        
         Write_history(parsed_line,history);

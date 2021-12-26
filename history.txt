@@ -8,3 +8,13 @@ ls
 history 
 ls ; ls 
 ls ; ls 
+ls
+ls > untxt.txt
+grep un | untxt.txt
+grep un < untxt.txt
+cd probar
+ls
+ls > untxt.txt
+grep un < untxt.txt
+help
+help
