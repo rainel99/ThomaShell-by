@@ -18,28 +18,31 @@ void Write_history(char** parsed_line, HistoryPtr history)
             char* line_in_history =calloc(100,sizeof(char));
             int line_number = atoi(parsed_line[index]);
             Again_line(line_number, line_in_history, history);
-            printf("%s",line_in_history);
+            //printf("%s",line_in_history);
             strcat(line,line_in_history);
-            printf("%s",line);
+            //printf("%s",line);
             if (parsed_line[index+1] != NULL)
             {
                 strcat(line," ");
             }
             
            
-            printf("%s",line);
+            //printf("%s",line);
             free(line_in_history);
             index +=1; 
             continue;
         }
 
         strcat(line,parsed_line[index]);
-        strcat(line," ");
+        if (parsed_line[index+1] != NULL)
+        {
+            strcat(line," ");
+        }
         index +=1;
     }
 
     if(space == 0){
-        printf("-----\n");
+        //printf("-----\n");
         strcat(line,"\n");
     }
         
@@ -102,7 +105,7 @@ void Read_history(HistoryPtr history)
     }  
 }
 
-void Again(int line_number, char* command, HistoryPtr history)
+void Again_line(int line_number, char* command, HistoryPtr history)
 {
     
     FILE* file; 

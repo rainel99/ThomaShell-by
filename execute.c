@@ -10,6 +10,7 @@
 #include <string.h>
 #include "history.h"
 #include "parse.h"
+#include <sys/queue.h>
 
 int counting_commands(CommandPtr* mycommands){
     int commands_count = 0;
@@ -57,6 +58,7 @@ int Execute(CommandPtr* mycommands, HistoryPtr history){
     int status = 0;
     int position = 0;
     int ** pipes_array;
+    int amount_again = 0;
 
     pipes_array=(int**) malloc((pipes_count)*sizeof(int*));
     for(int i=0; i < pipes_count;i++) {
@@ -76,10 +78,10 @@ int Execute(CommandPtr* mycommands, HistoryPtr history){
             }
             if(strcmp(actual_commands->arguments[0],"again") == 0)
             {
-
+                amount_again += 1;
                 int line_number = atoi(mycommands[position]->arguments[1]);
                 char* line = malloc(sizeof(char));
-                Again(line_number,line,history); 
+                Again_line(line_number,line,history); 
                 int read = strlen(line);
                 //Write_history(line,history);
                 char** parsed_line = Split(line, read);//splitea la linea
@@ -190,7 +192,7 @@ int Execute(CommandPtr* mycommands, HistoryPtr history){
             wait(NULL);
         w++;
     }
-        
+     
     //aqui
     return  1;
 }
