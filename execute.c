@@ -81,7 +81,7 @@ int Execute(CommandPtr* mycommands, HistoryPtr history){
                 char* line = malloc(sizeof(char));
                 Again(line_number,line,history); 
                 int read = strlen(line);
-                Write_history(line,history);
+                //Write_history(line,history);
                 char** parsed_line = Split(line, read);//splitea la linea
                 CommandPtr* commands = Parse(parsed_line);//convierte la linea en una lista de comandos
                 bultin_command(commands);
