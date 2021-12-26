@@ -3,8 +3,43 @@
 #include <string.h>
 #include "history.h"
 
-void Write_history(char* line, HistoryPtr history)
+void Write_history(char** parsed_line, HistoryPtr history)
 {
+    char* line = calloc(100,sizeof(char));//linea a escribir
+    int index = 0;
+    int space = 0;
+    while (parsed_line[index] != NULL)// escribir el comando en vez de again
+    {
+        if (strcmp("again",parsed_line[index]) ==0)
+        {   
+            
+            index +=1;
+            space = 1;
+            char* line_in_history =calloc(100,sizeof(char));
+            int line_number = atoi(parsed_line[index]);
+            Again_line(line_number, line_in_history, history);
+            strcat(line,line_in_history);
+            if(parsed_line[index+1] != NULL)
+            {
+                strcat(line," ");
+            }
+            free(line_in_history);
+            index +=1; 
+            continue;
+        }
+
+        strcat(line,parsed_line[index]);
+        if (parsed_line[index+1] != NULL)
+        {
+            strcat(line," ");
+        }
+        index +=1;
+    }
+
+    if(space == 0){
+        strcat(line,"\n");
+    }
+        
     char commands[9][100];// almacena los 10 comandos 
     
 
